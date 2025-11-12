@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toko Yola - Gelang Cantik</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ff66a3;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+    .container {
+      width: 90%;
+      margin: 20px auto;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .product {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    .product img {
+      width: 250px;
+      height: 250px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid #ff99cc;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #ff66a3;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #ff3385;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      background: #ffe5ef;
+      margin-bottom: 5px;
+      padding: 8px;
+      border-radius: 5px;
+    }
+    footer {
+      text-align: center;
+      color: #777;
+      padding: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Toko Yola - Gelang Cantik</h1>
+    <p>Alamat: Jl. Mawar No. 12, Bandung</p>
+  </header>
+
+  <div class="container">
+    <div class="product">
+      <div>
+        <img id="product-img" src="https://i.imgur.com/nJ7OyxR.jpeg" alt="Gelang Cantik">
+        <br><br>
+        <input type="file" id="upload-img" accept="image/*">
+      </div>
+      <div>
+        <h2>Gelang Cantik Handmade</h2>
+        <p>Harga: <b>Rp 45.000</b></p>
+        <p>Gelang manik-manik handmade yang cantik, elegan, dan cocok untuk hadiah.</p>
+        <label>Jumlah:</label>
+        <input type="number" id="qty" min="1" value="1">
+        <button onclick="addToCart()">Tambah ke Keranjang</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <h2>Keranjang Belanja</h2>
+    <ul id="cart-list"></ul>
+
+    <h3>Data Pembeli</h3>
+    <label>Nama Pembeli:</label>
+    <input type="text" id="buyer-name" placeholder="Masukkan nama Anda">
+    <label>Alamat Pembeli:</label>
+    <textarea id="buyer-address" placeholder="Masukkan alamat lengkap Anda"></textarea>
+    <button onclick="checkout()">Checkout</button>
+  </div>
+
+  <footer>
+    <p>© 2025 Toko Yola - Gelang Cantik</p>
+  </footer>
+
+  <script>
+    let cart = [];
+    const cartList = document.getElementById('cart-list');
+
+    function addToCart() {
+      const qty = parseInt(document.getElementById('qty').value);
+      if (qty <= 0) {
+        alert('Masukkan jumlah yang benar!');
+        return;
+      }
+      cart.push({ nama: "Gelang Cantik", harga: 45000, jumlah: qty });
+      renderCart();
+      alert("Produk ditambahkan ke keranjang!");
+    }
+
+    function renderCart() {
+      cartList.innerHTML = "";
+      if (cart.length === 0) {
+        cartList.innerHTML = "<li>Keranjang kosong</li>";
+        return;
+      }
+      cart.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `${item.nama} x ${item.jumlah} = Rp ${item.harga * item.jumlah} 
+                        <button onclick="removeItem(${index})" style="background:#ffb3c6;color:#000;margin-left:10px;">Hapus</button>`;
+        cartList.appendChild(li);
+      });
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    function checkout() {
+      const name = document.getElementById('buyer-name').value.trim();
+      const address = document.getElementById('buyer-address').value.trim();
+
+      if (cart.length === 0) {
+        alert('Keranjang masih kosong!');
+        return;
+      }
+      if (!name || !address) {
+        alert('Isi nama dan alamat agar penjual tahu data pembeli!');
+        return;
+      }
+
+      let total = cart.reduce((sum, item) => sum + (item.harga * item.jumlah), 0);
+      alert(`Checkout berhasil!\n\nNama: ${name}\nAlamat: ${address}\nTotal: Rp ${total}\nTerima kasih telah berbelanja di Toko Yola 💖`);
+      
+      cart = [];
+      renderCart();
+      document.getElementById('buyer-name').value = '';
+      document.getElementById('buyer-address').value = '';
+    }
+
+    // Fitur ubah gambar produk
+    document.getElementById('upload-img').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('product-img').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    renderCart();
+  </script>
+
+</body>
+</html>
